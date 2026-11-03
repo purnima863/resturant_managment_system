@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodieHub Dashboard</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            color: #334155;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        button,
+body {
+    caret-color: transparent;
+}
+
+input,
+textarea {
+    caret-color: auto;
+}
+        /* --- SIDEBAR STYLES --- */
+        aside {
+            width: 260px;
+            background-color: #121824;
+            color: #94a3b8;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 24px 20px;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .brand-icon {
+            background-color: #ff6b00;
+            color: #ffffff;
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+        }
+
+        .brand-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.3px;
+        }
+
+        .nav-menu {
+            margin-top: 20px;
+            padding: 0 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .nav-item:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-item.active {
+            background-color: #ff6b00;
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);
+        }
+
+        .sidebar-footer {
+            padding: 16px 12px;
+            border-top: 1px solid #1e293b;
+        }
+
+        /* --- MAIN LAYOUT STYLES --- */
+        .main-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover {
+            background-color: #f1f5f9;
+        }
+
+        .page-title h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .page-title p {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-bell {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-bell::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background-color: #ff6b00;
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-left: 16px;
+            border-left: 1px solid #e2e8f0;
+        }
+
+        .admin-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255, 107, 0, 0.2);
+        }
+
+        .admin-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .admin-info span {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* --- DASHBOARD CONTENT STYLES --- */
+        main {
+            padding: 28px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Metrics Row */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .metric-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .metric-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .metric-card.alert-card {
+            background-color: #fef2f2;
+            border-color: #fee2e2;
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .metric-value .alert-icon {
+            background-color: #fee2e2;
+            color: #ef4444;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .metric-footer {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+        }
+
+        .alert-card .metric-footer {
+            border-top-color: #fecaca;
+        }
+
+        .badge-new {
+            background-color: #ecfdf5;
+            color: #059669;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            border: 1px solid #a7f3d0;
+        }
+
+        .badge-action {
+            color: #991b1b;
+            font-weight: 600;
+        }
+
+        .badge-trend {
+            color: #059669;
+            font-weight: 600;
+        }
+
+        .badge-low {
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        /* Tables and Card Sections */
+        .section-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-header h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        /* Orders Table */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8fafc;
+            padding: 14px 24px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        td {
+            padding: 16px 24px;
+            font-size: 14px;
+            color: #334155;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        .customer-cell, .item-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .customer-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .item-thumb {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background-color: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+
+        .status-delivered {
+            background-color: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .status-pending .status-dot {
+            background-color: #d97706;
+        }
+
+        .status-delivered .status-dot {
+            background-color: #059669;
+        }
+
+        /* Bottom Grid Layout */
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .bottom-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .dish-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .dish-item:hover {
+            background-color: #f8fafc;
+            border-color: #e2e8f0;
+        }
+
+        .dish-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .dish-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .dish-details h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .dish-details p {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .dish-count {
+            background-color: #f1f5f9;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        /* Chef Team List */
+        .chef-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 20px 24px;
+        }
+
+        .chef-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .chef-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .chef-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .chef-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
+
+        .offline-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #94a3b8;
+            border-radius: 50%;
+        }
+
+        .section-footer-note {
+            padding: 16px 24px;
+            background-color: #f8fafc;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .section-footer-note i {
+            color: #ff6b00;
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #0f172a;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            aside {
+                position: fixed;
+                left: 0;
+                transform: translateX(-100%);
+            }
+            aside.open {
+                transform: translateX(0);
+            }
+            .menu-toggle {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <aside id="sidebar">
+        <div>
+            <div class="brand-container">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-utensils"></i>
+                </div>
+                <span class="brand-name">FoodieHub</span>
+            </div>
+            <nav class="nav-menu" id="nav-menu-container">
+                <!-- Populated dynamically via JS -->
+            </nav>
+        </div>
+        <div class="sidebar-footer">
+            <a href="#" onclick="handleNavClick('Logout')" class="nav-item">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="main-container">
+        <header>
+            <div class="header-left">
+                <button class="menu-toggle" id="menu-toggle" type="button"
+                        aria-label="Open navigation menu" aria-controls="sidebar" aria-expanded="false"
+                        onclick="toggleSidebar()">
+                    <i class="fa-solid fa-bars" aria-hidden="true"></i>
+                </button>
+               
+                <div class="page-title">
+                    <h2>Dashboard</h2>
+                    <p>Overview of restaurant performance</p>
+                </div>
+            </div>
+            <div class="header-right">
+               
+                <div class="admin-profile">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" 
+                         alt="Admin Profile" 
+                         onerror="this.src='https://placehold.co/150x150/e2e8f0/475569?text=Admin'"
+                         class="admin-avatar">
+                    <div class="admin-info">
+                        <h4>Admin</h4>
+                        <span>Store Manager</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!-- Metrics Row -->
+            <div class="metrics-grid" id="metrics-container">
+                <!-- Populated via JS -->
+            </div>
+
+            <!-- Recently Ordered Items Table -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h3>Recently Ordered Items</h3>
+                    <span style="font-size: 12px; color: #64748b; font-weight: 500;">Live Feed</span>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Bottom Section Grid -->
+            <div class="bottom-grid">
+                <!-- Top Selling Dishes -->
+                <div class="section-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div class="section-header">
+                        <h3>Top Selling Dishes</h3>
+                        <span style="font-size: 12px; color: #ff6b00; font-weight: 600; cursor: pointer;">View All</span>
+                    </div>
+                    <div style="padding: 16px 20px; display: flex; flex-direction: column; gap: 12px;" id="top-dishes-container">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+
+                <!-- Chef Team Availability -->
+                <div class="section-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div class="section-header">
+                        <h3>Chef Team Availability</h3>
+                        <span style="font-size: 12px; color: #64748b; font-weight: 500;">Chef Schedule</span>
+                    </div>
+                    <div class="chef-list" id="chef-team-container">
+                        <!-- Populated via JS -->
+                    </div>
+                    <div class="section-footer-note">
+                        <i class="fa-regular fa-calendar-days"></i>
+                        <span>Chef Schedule updated 5 mins ago</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- MOCK SQL DATABASE OBJECT ---
+        const db = {
+            sidebar: [
+                { name: 'Dashboard', icon: 'fa-solid fa-house', active: true },
+                { name: 'Meno Management', icon: 'fa-solid fa-book-open', active: false },
+                { name: 'Order Management', icon: 'fa-solid fa-receipt', active: false },
+                { name: 'Inventory', icon: 'fa-solid fa-box-archive', active: false },
+                { name: 'Reports', icon: 'fa-solid fa-chart-pie', active: false }
+            ],
+            metrics: [
+                {
+                    title: 'Total Orders',
+                    value: '24',
+                    badge: '✓ New',
+                    type: 'normal'
+                },
+                {
+                    title: 'Pending Orders',
+                    value: '7 Orders',
+                    badge: 'Require Immediate Action',
+                    type: 'alert',
+                    icon: 'fa-solid fa-triangle-exclamation'
+                },
+                {
+                    title: "Today's Earnings",
+                    value: '₹ 4,500',
+                    badge: ' ',
+                    subtext: 'Total Revenue Today',
+                    type: 'earnings'
+                },
+                {
+                    title: 'Low Stock Items',
+                    value: '3',
+                    badge: '↓ 1n',
+                    type: 'stock',
+                    iconWarning: true
+                }
+            ],
+            recentOrders: [
+                { id: '#4567', customer: 'Rahui S.', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80', item: 'Pizza + Cola', itemThumb: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=100&q=80', time: '12:03 PM', status: 'Pending' },
+                { id: '#4566', customer: 'Priya K.', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80', item: 'Butter Chicken', itemThumb: 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?auto=format&fit=crop&w=100&q=80', time: '11:58 AM', status: 'Delivered' },
+                { id: '#4565', customer: 'Rohan M.', avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=100&q=80', item: 'Veg Biryani', itemThumb: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=100&q=80', time: '11:55 AM', status: 'Delivered' },
+                { id: '#4567', customer: 'Rahui S.', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80', item: 'Pizza + Cola', itemThumb: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=100&q=80', time: '12:43 PM', status: 'Pending' },
+                { id: '#4568', customer: 'Rahui S.', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80', item: 'Butter Chicken', itemThumb: 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?auto=format&fit=crop&w=100&q=80', time: '11:58 AM', status: 'Pending' },
+                { id: '#4569', customer: 'Priya K.', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80', item: 'Veg Biryani', itemThumb: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=100&q=80', time: '11:55 AM', status: 'Delivered' },
+                { id: '#4500', customer: 'Rahui S.', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80', item: 'Pizza + Cola', itemThumb: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=100&q=80', time: '11:03 AM', status: 'Delivered' },
+                { id: '#4510', customer: 'Priya K.', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80', item: 'Veg Biryani', itemThumb: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=100&q=80', time: '11:55 AM', status: 'Delivered' }
+            ],
+            topSellingDishes: [
+                { name: 'Margherita Pizza', orders: '38 Orders', image: 'https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&w=150&q=80' },
+                { name: 'Veg Biryani', orders: '32 Orders', image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=150&q=80' }
+            ],
+            chefTeam: [
+                { name: 'Chef Rajesh', status: 'Online' },
+                { name: 'Chef Maria', status: 'Online' },
+                { name: 'Chef Suresh', status: 'Offline' }
+            ]
+        };
+
+        // --- RENDER FUNCTIONS ---
+        function renderSidebar() {
+            const container = document.getElementById('nav-menu-container');
+            container.innerHTML = db.sidebar.map(item => `
+                <a href="#" onclick="handleNavClick('${item.name}')" class="nav-item ${item.active ? 'active' : ''}">
+                    <i class="${item.icon}"></i>
+                    <span>${item.name}</span>
+                </a>
+            `).join('');
+        }
+
+        function renderMetrics() {
+            const container = document.getElementById('metrics-container');
+            container.innerHTML = db.metrics.map(m => {
+                if (m.type === 'alert') {
+                    return `
+                        <div class="metric-card alert-card">
+                            <div class="metric-header">
+                                <span>${m.title}</span>
+                            </div>
+                            <div class="metric-value">
+                                <div class="alert-icon">
+                                    <i class="${m.icon}"></i>
+                                </div>
+                                ${m.value}
+                            </div>
+                            <div class="metric-footer">
+                                <span class="badge-action">${m.badge}</span>
+                            </div>
+                        </div>
+                    `;
+                } else if (m.type === 'earnings') {
+                    return `
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span>${m.title}</span>
+                                <span class="badge-trend">${m.badge}</span>
+                            </div>
+                            <div class="metric-value">${m.value}</div>
+                            <div class="metric-footer">
+                                <span style="font-size: 12px; color: #64748b;">${m.subtext}</span>
+                            </div>
+                        </div>
+                    `;
+                } else if (m.type === 'stock') {
+                    return `
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span>${m.title}</span>
+                                <i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b;"></i>
+                            </div>
+                            <div class="metric-value">${m.value}</div>
+                            
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span>${m.title}</span>
+                            </div>
+                            <div class="metric-value">${m.value}</div>
+                            <div class="metric-footer">
+                                <span class="badge-new">${m.badge}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
+        }
+
+        function renderRecentOrders() {
+            const tbody = document.getElementById('orders-table-body');
+            tbody.innerHTML = db.recentOrders.map(order => {
+                const isPending = order.status === 'Pending';
+                const statusClass = isPending ? 'status-pending' : 'status-delivered';
+                return `
+                    <tr>
+                        <td style="font-weight: 600; color: #0f172a;">${order.id}</td>
+                        <td>
+                            <div class="customer-cell">
+                                <img src="${order.avatar}" alt="${order.customer}" onerror="this.src='https://placehold.co/100x100/e2e8f0/475569?text=User'" class="customer-avatar">
+                                <span style="font-weight: 500; color: #1e293b;">${order.customer}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="item-cell">
+                                <img src="${order.itemThumb}" alt="${order.item}" onerror="this.src='https://placehold.co/100x100/e2e8f0/475569?text=Food'" class="item-thumb">
+                                <span style="font-weight: 500; color: #334155;">${order.item}</span>
+                            </div>
+                        </td>
+                        <td style="color: #64748b;">${order.time}</td>
+                        <td>
+                            <span class="status-badge ${statusClass}">
+                                <span class="status-dot"></span>
+                                ${order.status}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderTopDishes() {
+            const container = document.getElementById('top-dishes-container');
+            container.innerHTML = db.topSellingDishes.map(dish => `
+                <div class="dish-item">
+                    <div class="dish-info">
+                        <img src="${dish.image}" alt="${dish.name}" onerror="this.src='https://placehold.co/150x150/e2e8f0/475569?text=Dish'" class="dish-img">
+                        <div class="dish-details">
+                            <h4>${dish.name}</h4>
+                            <p>${dish.orders}</p>
+                        </div>
+                    </div>
+                    <div class="dish-count">${dish.orders}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderChefTeam() {
+            const container = document.getElementById('chef-team-container');
+            container.innerHTML = db.chefTeam.map(chef => {
+                const isOnline = chef.status === 'Online';
+                return `
+                    <div class="chef-row">
+                        <span class="chef-name">${chef.name}</span>
+                        <div class="chef-status">
+                            <span>${chef.status}</span>
+                            <span class="${isOnline ? 'online-dot' : 'offline-dot'}"></span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- INTERACTION & EVENT HANDLERS ---
+        function handleNavClick(name) {
+            db.sidebar.forEach(item => {
+                item.active = (item.name === name);
+            });
+            renderSidebar();
+
+            if (window.matchMedia('(max-width: 768px)').matches) {
+                document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('menu-toggle').setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const isOpen = sidebar.classList.toggle('open');
+            document.getElementById('menu-toggle').setAttribute('aria-expanded', String(isOpen));
+        }
+
+        // --- PAGE INITIALIZATION ON LOAD ---
+        window.onload = function() {
+            renderSidebar();
+            renderMetrics();
+            renderRecentOrders();
+            renderTopDishes();
+            renderChefTeam();
+        };
+    </script>
+</body>
+</html>

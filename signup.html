@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodieHub - Sign Up</title>
+
+    <link rel="stylesheet" href="../css/style1.css">
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+</head>
+
+<body class="signup-page">
+    <div class="background"></div>
+    <div class="login-container">
+        <div class="blue-circle"></div>
+        <div class="login-content">
+            <p class="subtitle" id="authSubtitle">Create your account</p>
+            <h2 id="authHeading">Join FoodieHub</h2>
+
+            <div class="auth-tabs" role="tablist" aria-label="Account access">
+                <button class="auth-tab" type="button" id="loginTab" role="tab"
+                    aria-controls="loginPanel" aria-selected="false">Login</button>
+                <button class="auth-tab" type="button" id="signupTab" role="tab"
+                    aria-controls="signupPanel" aria-selected="true">Sign Up</button>
+            </div>
+
+            <form id="loginPanel" role="tabpanel" aria-labelledby="loginTab" hidden>
+                <div class="input-box">
+                    <i class="fa-regular fa-envelope"></i>
+                    <input type="email" id="loginEmail" name="email"
+                        placeholder="Email address" autocomplete="email" required>
+                </div>
+
+                <div class="input-box">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="loginPassword" name="password"
+                        placeholder="Password" autocomplete="current-password" required>
+                    <i class="fa-regular fa-eye toggle-password"
+                        data-password-target="loginPassword" role="button"
+                        tabindex="0" aria-label="Show password"></i>
+                </div>
+
+                <div class="options">
+                    <label>
+                        <input type="checkbox" name="remember">
+                        Remember me
+                    </label>
+                    <a href="forgot-password.html">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="signin-btn">Sign In</button>
+            </form>
+
+            <form id="signupPanel" role="tabpanel" aria-labelledby="signupTab">
+                <div class="input-box">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" name="name" placeholder="Full name"
+                        autocomplete="name" required>
+                </div>
+
+                <div class="input-box">
+                    <i class="fa-regular fa-envelope"></i>
+                    <input type="email" name="email" placeholder="Email address"
+                        autocomplete="email" required>
+                </div>
+
+                <div class="input-box">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="signupPassword" name="password"
+                        placeholder="Password" autocomplete="new-password" required>
+                    <i class="fa-regular fa-eye toggle-password"
+                        data-password-target="signupPassword" role="button"
+                        tabindex="0" aria-label="Show password"></i>
+                </div>
+
+                <div class="input-box">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="confirmPassword" name="confirmPassword"
+                        placeholder="Confirm password" autocomplete="new-password" required>
+                    <i class="fa-regular fa-eye toggle-password"
+                        data-password-target="confirmPassword" role="button"
+                        tabindex="0" aria-label="Show password"></i>
+                </div>
+
+                <div class="options">
+                    <label>
+                        <input type="checkbox" name="terms" required>
+                        I agree to terms
+                    </label>
+                </div>
+
+                <button type="submit" class="signin-btn">Create Account</button>
+            </form>
+
+            <p class="signup-text" id="authPrompt">
+                Already have an account?
+                <button class="auth-switch" type="button" data-auth-mode="login">Login</button>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const loginPanel = document.getElementById("loginPanel");
+        const signupPanel = document.getElementById("signupPanel");
+        const loginTab = document.getElementById("loginTab");
+        const signupTab = document.getElementById("signupTab");
+        const authSubtitle = document.getElementById("authSubtitle");
+        const authHeading = document.getElementById("authHeading");
+        const authPrompt = document.getElementById("authPrompt");
+
+        function setAuthMode(mode, updateUrl = true) {
+            const isLogin = mode === "login";
+
+            loginPanel.hidden = !isLogin;
+            signupPanel.hidden = isLogin;
+            loginTab.setAttribute("aria-selected", String(isLogin));
+            signupTab.setAttribute("aria-selected", String(!isLogin));
+            authSubtitle.textContent = isLogin
+                ? "Please enter your details"
+                : "Create your account";
+            authHeading.textContent = isLogin
+                ? "Welcome to FoodieHub"
+                : "Join FoodieHub";
+            authPrompt.innerHTML = isLogin
+                ? 'Don\'t have an account? <button class="auth-switch" type="button" data-auth-mode="signup">Sign Up</button>'
+                : 'Already have an account? <button class="auth-switch" type="button" data-auth-mode="login">Login</button>';
+            document.title = `FoodieHub - ${isLogin ? "Login" : "Sign Up"}`;
+
+            if (updateUrl) {
+                const url = new URL(window.location.href);
+                url.searchParams.set("mode", mode);
+                window.history.replaceState({}, "", url);
+            }
+        }
+
+        document.querySelectorAll(".auth-tab").forEach((tab) => {
+            tab.addEventListener("click", () => {
+                setAuthMode(tab.id === "loginTab" ? "login" : "signup");
+            });
+        });
+
+        document.addEventListener("click", (event) => {
+            const switchButton = event.target.closest("[data-auth-mode]");
+            if (switchButton) {
+                setAuthMode(switchButton.dataset.authMode);
+            }
+        });
+
+        document.querySelectorAll("[data-password-target]").forEach((icon) => {
+            const toggleVisibility = () => {
+                const input = document.getElementById(icon.dataset.passwordTarget);
+                const isPassword = input.type === "password";
+                input.type = isPassword ? "text" : "password";
+                icon.classList.toggle("fa-eye", !isPassword);
+                icon.classList.toggle("fa-eye-slash", isPassword);
+                icon.setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
+            };
+
+            icon.addEventListener("click", toggleVisibility);
+            icon.addEventListener("keydown", (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    toggleVisibility();
+                }
+            });
+        });
+
+        loginPanel.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const email = document.getElementById("loginEmail").value.trim();
+            sessionStorage.setItem("foodieHubCustomerEmail", email);
+            window.location.href = "Dashboard.html";
+        });
+
+        signupPanel.addEventListener("submit", (event) => {
+            event.preventDefault();
+            if (document.getElementById("signupPassword").value !==
+                document.getElementById("confirmPassword").value) {
+                alert("Passwords do not match!");
+                return;
+            }
+
+            alert("Sign up successful! Connect your backend to save data.");
+        });
+
+        setAuthMode(
+            new URLSearchParams(window.location.search).get("mode") === "login"
+                ? "login"
+                : "signup",
+            false
+        );
+    </script>
+</body>
+</html>
